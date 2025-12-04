@@ -5,7 +5,7 @@
     <meta charset="UTF-8">
     <meta name="viewport"
         content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
-    <title>นัดวันว่างให้ตรงกับอาร์มได้มั้ย</title>
+    <title>ชื่อเว็บว่า "นัดวันว่างให้ตรงกับอาร์มได้มั้ย" โป่งโป๊ง</title>
     <link href="https://fonts.googleapis.com/css2?family=Kanit:wght@300;400;500;600&display=swap" rel="stylesheet">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
 
@@ -668,27 +668,68 @@
 
         function findCommonTime() {
             if (Object.keys(processedEvents).length === 0) return alert("ยังไม่มีข้อมูลเพื่อนเลย");
-            let counts = {};
+
+            // 1. แปลงข้อมูลเพื่อนับจำนวนคนในแต่ละวัน
+            let dateCounts = [];
+
             for (let dateKey in processedEvents) {
                 let people = processedEvents[dateKey];
+                let count = people.length;
+
+                // แปลงวันที่ให้สวยงาม
                 let d = new Date(dateKey);
-                let prettyDate = d.toLocaleDateString('th-TH', { weekday: 'short', day: 'numeric', month: 'short' });
-                people.forEach(p => {
-                    let key = `${prettyDate} <br> เวลา: ${p.time}`;
-                    counts[key] = (counts[key] || 0) + 1;
+                let prettyDate = d.toLocaleDateString('th-TH', {
+                    weekday: 'short',
+                    day: 'numeric',
+                    month: 'short',
+                    year: '2-digit'
+                });
+
+                dateCounts.push({
+                    rawDate: dateKey,
+                    displayDate: prettyDate,
+                    count: count,
+                    people: people
                 });
             }
-            let sorted = Object.entries(counts).sort((a, b) => b[1] - a[1]);
-            let maxVal = sorted[0][1];
-            let winners = sorted.filter(x => x[1] === maxVal);
+
+            // 2. เรียงลำดับจากคนว่างเยอะสุด -> น้อยสุด
+            dateCounts.sort((a, b) => b.count - a.count);
+
+            // 3. ดึงเฉพาะวันที่มีคนว่างเยอะที่สุด (อาจมีหลายวันถ้าคะแนนเท่ากัน)
+            let maxVal = dateCounts[0].count;
+            let winners = dateCounts.filter(d => d.count === maxVal);
+
+            // 4. แสดงผล
             const box = document.getElementById('bestTime');
             box.style.display = 'block';
-            let html = `🎉 <b>วันยอดฮิต (ว่าง ${maxVal} คน):</b><br>`;
+
+            let html = `<div style="margin-bottom:10px; font-size:1.1rem;">🏆 <b>วันยอดฮิต (ว่าง ${maxVal} คน):</b></div>`;
+
             winners.forEach(w => {
-                html += `<div style="margin-top:10px; padding:10px; background:white; border-radius:8px; box-shadow:0 2px 5px rgba(0,0,0,0.05);">${w[0]}</div>`;
+                // สร้างรายการคนในวันนั้น
+                let peopleList = w.people.map(p =>
+                    `<li style="text-align:left; font-size:0.9rem; color:#555; margin-top:4px;">
+                        <strong>${p.name}</strong> <span style="font-size:0.8em; color:#888;">(${p.time})</span>
+                     </li>`
+                ).join("");
+
+                html += `
+                    <div style="margin-top:15px; padding:15px; background:white; border-radius:12px; box-shadow:0 4px 10px rgba(0,0,0,0.05); border-left: 5px solid #2ECC71;">
+                        <h3 style="margin:0 0 10px 0; color:#2C3E50;">${w.displayDate}</h3>
+                        <ul style="margin:0; padding-left:20px;">
+                            ${peopleList}
+                        </ul>
+                    </div>
+                `;
             });
+
             box.innerHTML = html;
-            box.scrollIntoView({ behavior: "smooth" });
+
+            // เลื่อนหน้าจอลงมาดูผลลัพธ์
+            setTimeout(() => {
+                box.scrollIntoView({ behavior: "smooth", block: "start" });
+            }, 100);
         }
     </script>
 </body>
