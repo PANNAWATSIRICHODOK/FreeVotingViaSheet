@@ -1,0 +1,696 @@
+<!DOCTYPE html>
+<html lang="th">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport"
+        content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+    <title>นัดวันว่าง (By Arm)</title>
+    <link href="https://fonts.googleapis.com/css2?family=Kanit:wght@300;400;500;600&display=swap" rel="stylesheet">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+
+    <style>
+        /* CSS Variables */
+        :root {
+            --primary: #4A90E2;
+            --primary-dark: #357ABD;
+            --accent: #FF6B6B;
+            --text-main: #2C3E50;
+            --text-secondary: #666;
+            --glass-bg: rgba(255, 255, 255, 0.92);
+            --glass-border: rgba(255, 255, 255, 0.4);
+            --safe-area-top: env(safe-area-inset-top);
+            --safe-area-bottom: env(safe-area-inset-bottom);
+        }
+
+        body {
+            font-family: 'Kanit', sans-serif;
+            margin: 0;
+            padding: 0;
+            overflow-x: hidden;
+            background-color: #1a1a2e;
+            color: var(--text-main);
+            -webkit-text-size-adjust: 100%;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        #canvas-container {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -1;
+            background: radial-gradient(circle at center, #2b32b2, #1488cc);
+            pointer-events: none;
+        }
+
+        .container {
+            max-width: 550px;
+            width: 100%;
+            box-sizing: border-box;
+            margin: 0 auto;
+            position: relative;
+            z-index: 1;
+            padding: calc(20px + var(--safe-area-top)) 15px calc(20px + var(--safe-area-bottom)) 15px;
+        }
+
+        .card {
+            background: var(--glass-bg);
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            padding: 25px 20px;
+            border-radius: 24px;
+            box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.25);
+            border: 1px solid var(--glass-border);
+            margin-bottom: 20px;
+            animation: slideUp 0.6s cubic-bezier(0.2, 0.8, 0.2, 1);
+        }
+
+        h1 {
+            text-align: center;
+            color: var(--primary);
+            margin: 0 0 15px 0;
+            font-weight: 600;
+            font-size: 1.6rem;
+            text-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+
+        label {
+            font-size: 0.95rem;
+            color: var(--text-main);
+            margin-top: 15px;
+            margin-bottom: 8px;
+            display: block;
+            font-weight: 500;
+        }
+
+        .row-inputs {
+            display: flex;
+            gap: 10px;
+            align-items: flex-end;
+        }
+
+        input,
+        select {
+            width: 100%;
+            padding: 12px 14px;
+            margin-bottom: 5px;
+            border: 1px solid #dce4ec;
+            border-radius: 12px;
+            font-family: 'Kanit';
+            font-size: 16px;
+            background-color: rgba(255, 255, 255, 0.8);
+            transition: all 0.2s;
+            box-sizing: border-box;
+            color: var(--text-main);
+            -webkit-appearance: none;
+            appearance: none;
+        }
+
+        /* ป้องกัน Cursor Text ขึ้นตอนเอาเมาส์ชี้ Date */
+        input[type="date"] {
+            cursor: pointer;
+            position: relative;
+        }
+
+        input[type="date"]::-webkit-calendar-picker-indicator {
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            width: auto;
+            height: auto;
+            color: transparent;
+            background: transparent;
+            cursor: pointer;
+        }
+
+        select {
+            background-image: url("data:image/svg+xml;charset=US-ASCII,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%22292.4%22%20height%3D%22292.4%22%3E%3Cpath%20fill%3D%22%234A90E2%22%20d%3D%22M287%2069.4a17.6%2017.6%200%200%200-13-5.4H18.4c-5%200-9.3%201.8-12.9%205.4A17.6%2017.6%200%200%200%200%2082.2c0%205%201.8%209.3%205.4%2012.9l128%20127.9c3.6%203.6%207.8%205.4%2012.8%205.4s9.2-1.8%2012.8-5.4L287%2095c3.5-3.5%205.4-7.8%205.4-12.8%200-5-1.9-9.2-5.5-12.8z%22%2F%3E%3C%2Fsvg%3E");
+            background-repeat: no-repeat;
+            background-position: right 1em top 50%;
+            background-size: .8em auto;
+            padding-right: 2.5em;
+        }
+
+        input:focus,
+        select:focus {
+            border-color: var(--primary);
+            outline: none;
+            box-shadow: 0 0 0 3px rgba(74, 144, 226, 0.2);
+            background-color: #fff;
+        }
+
+        button {
+            width: 100%;
+            padding: 14px;
+            margin-top: 20px;
+            border: none;
+            border-radius: 14px;
+            font-family: 'Kanit';
+            font-size: 1.1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: 0.2s;
+            background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%);
+            color: white;
+            box-shadow: 0 8px 15px -5px rgba(74, 144, 226, 0.4);
+            position: relative;
+            overflow: hidden;
+            -webkit-user-select: none;
+        }
+
+        button:active {
+            transform: scale(0.97);
+        }
+
+        button:disabled {
+            background: #bdc3c7;
+            box-shadow: none;
+            cursor: not-allowed;
+        }
+
+        button.cal-btn {
+            background: linear-gradient(135deg, #2ECC71 0%, #27AE60 100%);
+            box-shadow: 0 8px 15px -5px rgba(46, 204, 113, 0.4);
+            margin-top: 15px;
+        }
+
+        /* --- Calendar Styles --- */
+        .calendar-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 10px;
+            font-weight: 600;
+            font-size: 1.1rem;
+            background: rgba(255, 255, 255, 0.5);
+            padding: 8px;
+            border-radius: 12px;
+        }
+
+        .calendar-nav-btn {
+            background: white;
+            border: none;
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            cursor: pointer;
+            color: var(--primary);
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+            margin: 0;
+            padding: 0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .calendar-grid {
+            display: grid;
+            grid-template-columns: repeat(7, 1fr);
+            gap: 4px;
+            text-align: center;
+        }
+
+        .day-name {
+            font-size: 0.8rem;
+            color: #888;
+            padding-bottom: 5px;
+            font-weight: 500;
+        }
+
+        .calendar-day {
+            aspect-ratio: 1 / 1;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 10px;
+            cursor: pointer;
+            position: relative;
+            background: rgba(255, 255, 255, 0.5);
+            font-size: 1rem;
+            transition: 0.1s;
+        }
+
+        .calendar-day:active {
+            transform: scale(0.9);
+        }
+
+        .calendar-day.empty {
+            background: transparent;
+            cursor: default;
+        }
+
+        .calendar-day.has-event {
+            background: #E8F8F5;
+            color: #2ECC71;
+            border: 1px solid #2ECC71;
+            font-weight: 600;
+        }
+
+        .calendar-day.selected {
+            background: var(--primary);
+            color: white;
+            border: 1px solid var(--primary);
+        }
+
+        .date-details-box {
+            margin-top: 20px;
+            padding: 15px;
+            background: #fff;
+            border-radius: 16px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.08);
+            display: none;
+            animation: slideUp 0.3s;
+        }
+
+        .detail-item {
+            display: flex;
+            justify-content: space-between;
+            padding: 10px 0;
+            border-bottom: 1px solid #f0f0f0;
+        }
+
+        .detail-item:last-child {
+            border-bottom: none;
+        }
+
+        .footer-wrapper {
+            text-align: center;
+            margin-top: 30px;
+            margin-bottom: 10px;
+        }
+
+        .credit-badge {
+            display: inline-block;
+            background: rgba(255, 255, 255, 0.95);
+            padding: 6px 16px;
+            border-radius: 50px;
+            font-size: 0.85rem;
+            color: var(--text-main);
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+            font-weight: 500;
+        }
+
+        .credit-badge span {
+            color: #E74C3C;
+        }
+
+        .warning-text {
+            display: block;
+            margin-top: 8px;
+            font-size: 0.7rem;
+            color: rgba(255, 255, 255, 0.7);
+        }
+
+        @keyframes slideUp {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        /* ✅ แก้ไข CSS Layout บนมือถือ */
+        @media (max-width: 480px) {
+            .container {
+                width: 94%;
+                padding-left: 10px;
+                padding-right: 10px;
+            }
+
+            .card {
+                padding: 20px 15px;
+            }
+
+            h1 {
+                font-size: 1.4rem;
+            }
+
+            /* จัดการกลุ่มวันที่ (เรียงลงมา) */
+            .row-inputs.date-group {
+                flex-direction: column;
+                gap: 5px;
+            }
+
+            .row-inputs.date-group span {
+                text-align: left;
+                padding: 5px 0 2px 5px;
+                font-size: 0.85rem;
+            }
+
+            /* ✅ จัดการกลุ่มเวลา (Time) ให้เรียงลงมา และกว้างเต็มจอ */
+            .row-inputs.time-group {
+                flex-direction: column;
+                gap: 15px;
+            }
+
+            /* บังคับให้ div ภายในกว้าง 100% แทนที่จะเป็น 50% */
+            .row-inputs.time-group>div {
+                width: 100% !important;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <div id="canvas-container"></div>
+
+    <div class="container">
+        <div class="card">
+            <h1>📅 นัดวันว่าง</h1>
+
+            <label>👤 ชื่อของคุณ</label>
+            <input type="text" id="name" placeholder="ชื่อเล่น (เช่น อาร์มสุดหล่อ)">
+
+            <label>🗓️ เลือกวันที่ว่าง</label>
+            <div class="row-inputs date-group">
+                <input type="date" id="startDate" onkeydown="return false" onclick="this.showPicker()">
+                <span style="padding-bottom:12px; color:#888; font-size:0.9rem;">ถึง</span>
+                <input type="date" id="endDate" onkeydown="return false" onclick="this.showPicker()">
+            </div>
+
+            <label>⏰ ช่วงเวลา (24 ชม.)</label>
+            <div class="row-inputs time-group">
+                <div style="width: 50%;">
+                    <small style="color:var(--text-secondary);">ตั้งแต่</small>
+                    <select id="startTime"></select>
+                </div>
+                <div style="width: 50%;">
+                    <small style="color:var(--text-secondary);">ถึงเวลา (ข้ามวันได้)</small>
+                    <select id="endTime"></select>
+                </div>
+            </div>
+
+            <button onclick="submitData()">🚀 ยืนยันข้อมูล</button>
+        </div>
+
+        <div class="card">
+            <h3>🗓️ ปฏิทินวันว่างเพื่อน</h3>
+            <div id="loading" style="text-align:center; color:#666; padding:20px;">
+                <div style="font-size:2rem;">⏳</div>
+                กำลังโหลดข้อมูล...
+            </div>
+
+            <div id="calendar-wrapper" style="display:none;">
+                <div class="calendar-header">
+                    <button class="calendar-nav-btn" onclick="changeMonth(-1)">&#10094;</button>
+                    <span id="month-year-label"></span>
+                    <button class="calendar-nav-btn" onclick="changeMonth(1)">&#10095;</button>
+                </div>
+
+                <div class="calendar-grid">
+                    <div class="day-name">อา</div>
+                    <div class="day-name">จ</div>
+                    <div class="day-name">อ</div>
+                    <div class="day-name">พ</div>
+                    <div class="day-name">พฤ</div>
+                    <div class="day-name">ศ</div>
+                    <div class="day-name">ส</div>
+                </div>
+
+                <div id="calendar-days" class="calendar-grid"></div>
+            </div>
+
+            <div id="selectedDateDetails" class="date-details-box">
+                <h4 id="detail-date-title" style="margin:0 0 10px 0; color:var(--primary);"></h4>
+                <div id="detail-list"></div>
+            </div>
+
+            <button class="cal-btn" onclick="findCommonTime()">🔍 สรุปวันยอดฮิต</button>
+            <div id="bestTime" class="result-box"
+                style="display:none; margin-top:15px; padding:15px; background:#E8F8F5; border-radius:10px; border:2px dashed #2ECC71; text-align:center;">
+            </div>
+        </div>
+
+        <div class="footer-wrapper">
+            <div class="credit-badge">
+                ⚡ Developed by <strong>Arm</strong> <span>❤️</span>
+            </div>
+            <span class="warning-text">*เว็บฟรี 100% อาจจะช้านิดนึงนะจ๊ะ วัยรุ่นใจเย็นๆ</span>
+        </div>
+    </div>
+
+    <script>
+        const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbyNv4P-rNP8zrNZC7Lpjmq8cMpHbRUHE0iZijzDT7OhlRvrXc0i4zH6TgCc3Ttzgc69/exec';
+
+        // --- Three.js Background ---
+        function initThreeJS() {
+            const container = document.getElementById('canvas-container');
+            const scene = new THREE.Scene();
+            scene.fog = new THREE.FogExp2(0x0a0a2a, 0.002);
+            const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
+            const renderer = new THREE.WebGLRenderer({ alpha: true, antialias: true });
+            renderer.setSize(window.innerWidth, window.innerHeight);
+            renderer.setPixelRatio(window.devicePixelRatio);
+            container.appendChild(renderer.domElement);
+
+            const geometry = new THREE.BufferGeometry();
+            const count = 1500;
+            const positions = new Float32Array(count * 3);
+            for (let i = 0; i < count * 3; i++) { positions[i] = (Math.random() - 0.5) * 20; }
+            geometry.setAttribute('position', new THREE.BufferAttribute(positions, 3));
+
+            const material = new THREE.PointsMaterial({ size: 0.05, color: 0x4A90E2, transparent: true, opacity: 0.8, sizeAttenuation: true });
+            const particles = new THREE.Points(geometry, material);
+            scene.add(particles);
+            camera.position.z = 5;
+
+            function animate() {
+                requestAnimationFrame(animate);
+                particles.rotation.y += 0.001;
+                particles.rotation.x += 0.0005;
+                renderer.render(scene, camera);
+            }
+            animate();
+            window.addEventListener('resize', () => {
+                camera.aspect = window.innerWidth / window.innerHeight;
+                camera.updateProjectionMatrix();
+                renderer.setSize(window.innerWidth, window.innerHeight);
+            });
+        }
+
+        window.onload = function () {
+            initThreeJS();
+            generateTimeOptions();
+            loadData();
+        };
+
+        function generateTimeOptions() {
+            const startSelect = document.getElementById('startTime');
+            const endSelect = document.getElementById('endTime');
+            let options = "";
+            for (let i = 0; i < 24; i++) {
+                for (let j = 0; j < 60; j += 30) {
+                    let h = i.toString().padStart(2, '0');
+                    let m = j.toString().padStart(2, '0');
+                    let time = `${h}:${m}`;
+                    options += `<option value="${time}">${time}</option>`;
+                }
+            }
+            options += `<option value="00:00">00:00 (เที่ยงคืน)</option>`;
+            startSelect.innerHTML = options;
+            endSelect.innerHTML = options;
+            startSelect.value = "19:00";
+            endSelect.value = "00:30";
+        }
+
+        async function submitData() {
+            const name = document.getElementById('name').value;
+            const sDate = document.getElementById('startDate').value;
+            const eDate = document.getElementById('endDate').value;
+            const sTime = document.getElementById('startTime').value;
+            const eTime = document.getElementById('endTime').value;
+
+            if (!name || !sDate || !eDate) return alert("⚠️ อย่าลืมใส่ชื่อและวันที่ สิคร๊าบบ พับผ่าสิ ตาพวงงง");
+            if (sDate > eDate) return alert("⚠️ วันที่เริ่ม ต้องมาก่อน หรือวันเดียวกับ วันที่สิ้นสุด ไอเวร");
+
+            const btn = document.querySelector('button');
+            const originalText = btn.innerText;
+            btn.innerHTML = "กำลังส่งข้อมูล... 🚀";
+            btn.disabled = true;
+
+            let timeString = `${sTime} - ${eTime}`;
+            let dateToSend = (sDate === eDate) ? sDate : `${sDate} ถึง ${eDate}`;
+
+            try {
+                await fetch(SCRIPT_URL, {
+                    method: 'POST',
+                    mode: 'no-cors',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ name: name, date: dateToSend, timeSlot: timeString })
+                });
+                alert(`✅ เรียบร้อย! บันทึกข้อมูลแล้ว`);
+                loadData();
+            } catch (err) {
+                console.error(err);
+                alert("❌ เกิดข้อผิดพลาดในการเชื่อมต่อ เว็บฟรีก็งี้แหละ แม่งชอบหลุด ช้าด้วย แล้วไมมึงไม่ทำเอง สัส");
+            } finally {
+                btn.innerHTML = originalText;
+                btn.disabled = false;
+            }
+        }
+
+        function getDates(startDateStr, endDateStr) {
+            let dates = [];
+            let current = new Date(startDateStr);
+            let end = new Date(endDateStr);
+            current.setHours(0, 0, 0, 0);
+            end.setHours(0, 0, 0, 0);
+            while (current <= end) {
+                let year = current.getFullYear();
+                let month = (current.getMonth() + 1).toString().padStart(2, '0');
+                let day = current.getDate().toString().padStart(2, '0');
+                dates.push(`${year}-${month}-${day}`);
+                current.setDate(current.getDate() + 1);
+            }
+            return dates;
+        }
+
+        let currentMonth = new Date().getMonth();
+        let currentYear = new Date().getFullYear();
+        window.allDataCache = [];
+        let processedEvents = {};
+
+        function loadData() {
+            fetch(SCRIPT_URL)
+                .then(res => res.json())
+                .then(data => {
+                    window.allDataCache = data;
+                    document.getElementById('loading').style.display = 'none';
+                    document.getElementById('calendar-wrapper').style.display = 'block';
+                    processEventsData(data);
+                    renderCalendar(currentMonth, currentYear);
+                })
+                .catch(err => {
+                    document.getElementById('loading').innerText = "โหลดข้อมูลไม่สำเร็จ 😅 ยิ้มแห้งเลย ทำไงดีหล่ะกู";
+                });
+        }
+
+        function processEventsData(data) {
+            processedEvents = {};
+            data.forEach(row => {
+                let rawDate = row[2];
+                let name = row[1];
+                let timeSlot = row[3];
+                let dates = [];
+                if (rawDate.includes(" ถึง ")) {
+                    let parts = rawDate.split(" ถึง ");
+                    dates = getDates(parts[0], parts[1]);
+                } else {
+                    dates = [rawDate];
+                }
+                dates.forEach(dateStr => {
+                    if (!processedEvents[dateStr]) { processedEvents[dateStr] = []; }
+                    processedEvents[dateStr].push({ name: name, time: timeSlot });
+                });
+            });
+        }
+
+        function renderCalendar(month, year) {
+            const daysContainer = document.getElementById('calendar-days');
+            const label = document.getElementById('month-year-label');
+            daysContainer.innerHTML = "";
+
+            const thaiMonths = ["มกราคม", "กุมภาพันธ์", "มีนาคม", "เมษายน", "พฤษภาคม", "มิถุนายน", "กรกฎาคม", "สิงหาคม", "กันยายน", "ตุลาคม", "พฤศจิกายน", "ธันวาคม"];
+            label.innerText = `${thaiMonths[month]} ${year + 543}`;
+
+            const firstDay = new Date(year, month, 1).getDay();
+            const daysInMonth = new Date(year, month + 1, 0).getDate();
+
+            for (let i = 0; i < firstDay; i++) {
+                let emptyDiv = document.createElement("div");
+                emptyDiv.classList.add("calendar-day", "empty");
+                daysContainer.appendChild(emptyDiv);
+            }
+
+            for (let day = 1; day <= daysInMonth; day++) {
+                let dayDiv = document.createElement("div");
+                dayDiv.classList.add("calendar-day");
+                dayDiv.innerText = day;
+                let dateKey = `${year}-${(month + 1).toString().padStart(2, '0')}-${day.toString().padStart(2, '0')}`;
+                if (processedEvents[dateKey]) {
+                    dayDiv.classList.add("has-event");
+                }
+                dayDiv.onclick = () => {
+                    document.querySelectorAll('.calendar-day').forEach(d => d.classList.remove('selected'));
+                    dayDiv.classList.add('selected');
+                    showDetails(dateKey, day, month, year);
+                };
+                daysContainer.appendChild(dayDiv);
+            }
+        }
+
+        function showDetails(dateKey, day, month, year) {
+            const detailBox = document.getElementById('selectedDateDetails');
+            const title = document.getElementById('detail-date-title');
+            const list = document.getElementById('detail-list');
+            const thaiMonths = ["ม.ค.", "ก.พ.", "มี.ค.", "เม.ย.", "พ.ค.", "มิ.ย.", "ก.ค.", "ส.ค.", "ก.ย.", "ต.ค.", "พ.ย.", "ธ.ค."];
+
+            title.innerText = `รายชื่อคนว่างวันที่ ${day} ${thaiMonths[month]} ${year + 543}`;
+            list.innerHTML = "";
+
+            if (processedEvents[dateKey]) {
+                processedEvents[dateKey].forEach(item => {
+                    list.innerHTML += `
+                        <div class="detail-item">
+                            <span style="font-weight:600;">${item.name}</span>
+                            <span style="color:#666; font-size:0.9em;">${item.time}</span>
+                        </div>
+                    `;
+                });
+                detailBox.style.display = 'block';
+                detailBox.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+            } else {
+                list.innerHTML = `<div style="text-align:center; color:#999; padding:10px;">ไม่มีใครลงชื่อวันนี้ 😴</div>`;
+                detailBox.style.display = 'block';
+            }
+        }
+
+        function changeMonth(direction) {
+            currentMonth += direction;
+            if (currentMonth < 0) {
+                currentMonth = 11;
+                currentYear--;
+            } else if (currentMonth > 11) {
+                currentMonth = 0;
+                currentYear++;
+            }
+            renderCalendar(currentMonth, currentYear);
+            document.getElementById('selectedDateDetails').style.display = 'none';
+        }
+
+        function findCommonTime() {
+            if (Object.keys(processedEvents).length === 0) return alert("ยังไม่มีข้อมูลเพื่อนเลย");
+            let counts = {};
+            for (let dateKey in processedEvents) {
+                let people = processedEvents[dateKey];
+                let d = new Date(dateKey);
+                let prettyDate = d.toLocaleDateString('th-TH', { weekday: 'short', day: 'numeric', month: 'short' });
+                people.forEach(p => {
+                    let key = `${prettyDate} <br> เวลา: ${p.time}`;
+                    counts[key] = (counts[key] || 0) + 1;
+                });
+            }
+            let sorted = Object.entries(counts).sort((a, b) => b[1] - a[1]);
+            let maxVal = sorted[0][1];
+            let winners = sorted.filter(x => x[1] === maxVal);
+            const box = document.getElementById('bestTime');
+            box.style.display = 'block';
+            let html = `🎉 <b>วันยอดฮิต (ว่าง ${maxVal} คน):</b><br>`;
+            winners.forEach(w => {
+                html += `<div style="margin-top:10px; padding:10px; background:white; border-radius:8px; box-shadow:0 2px 5px rgba(0,0,0,0.05);">${w[0]}</div>`;
+            });
+            box.innerHTML = html;
+            box.scrollIntoView({ behavior: "smooth" });
+        }
+    </script>
+</body>
+
+</html>
