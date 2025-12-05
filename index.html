@@ -1,36 +1,47 @@
-<!doctypehtml>
-    <html lang="th">
+<!doctype html>
+<html lang="th">
+
+<head>
     <meta charset="UTF-8">
     <meta content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no,viewport-fit=cover"
         name="viewport">
-    <title>นัดวันว่างให้ตรงกับอาร์มทีเถอะไหว้หล่ะ</title>
-    <link href="https://fonts.googleapis.com/css2?family=Kanit:wght@300;400;500;600&display=swap" rel="stylesheet">
+    <title>ภารกิจ: ตามล่าหาเวลาว่าง</title>
+    <!-- Fonts: Orbitron สำหรับหัวข้อ Sci-Fi, Kanit สำหรับภาษาไทย -->
+    <link
+        href="https://fonts.googleapis.com/css2?family=Kanit:wght@300;400;500;600&family=Orbitron:wght@400;700;900&display=swap"
+        rel="stylesheet">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
     <style>
         :root {
-            --primary: #4A90E2;
-            --primary-dark: #357ABD;
-            --accent: #FF6B6B;
-            --text-main: #2C3E50;
-            --text-secondary: #666;
-            --glass-bg: rgba(255, 255, 255, 0.75);
-            --glass-border: rgba(255, 255, 255, 0.9);
-            --glass-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.15);
-            --safe-area-top: env(safe-area-inset-top);
-            --safe-area-bottom: env(safe-area-inset-bottom)
+            /* Guardians Palette */
+            --neon-cyan: #00f3ff;
+            --neon-magenta: #bc13fe;
+            --deep-space: #0b0b14;
+
+            /* Star Wars Palette */
+            --saber-blue: #2ff;
+            --saber-red: #f00;
+            --star-gold: #ffe81f;
+
+            /* Glass Vars */
+            --glass-bg: rgba(20, 25, 40, 0.65);
+            --glass-border: rgba(255, 255, 255, 0.1);
+            --liquid-highlight: rgba(255, 255, 255, 0.2);
         }
 
         body {
-            font-family: Kanit, sans-serif;
+            font-family: 'Kanit', sans-serif;
             margin: 0;
             padding: 0;
             overflow-x: hidden;
-            background-color: #f0f4f8;
-            color: var(--text-main);
-            -webkit-text-size-adjust: 100%;
-            -webkit-tap-highlight-color: transparent
+            background-color: var(--deep-space);
+            color: #fff;
+            -webkit-tap-highlight-color: transparent;
+            min-height: 100vh;
+            /* Ensure full height */
         }
 
+        /* --- Three.js Background --- */
         #canvas-container {
             position: fixed;
             top: 0;
@@ -38,171 +49,247 @@
             width: 100%;
             height: 100%;
             z-index: -1;
-            background: radial-gradient(circle at center, #dceefc, #bfdfff);
-            pointer-events: none
+            background: radial-gradient(circle at center, #1a0b2e 0%, #000000 100%);
         }
 
         .container {
-            max-width: 550px;
+            max-width: 600px;
             width: 100%;
-            box-sizing: border-box;
             margin: 0 auto;
+            padding: 40px 20px;
             position: relative;
             z-index: 1;
-            padding: calc(20px + var(--safe-area-top)) 15px calc(20px + var(--safe-area-bottom)) 15px
+            box-sizing: border-box;
+            /* Ensure padding doesn't affect width */
         }
 
+        /* --- Liquid Glass Card --- */
         .card {
             background: var(--glass-bg);
-            backdrop-filter: blur(12px);
-            -webkit-backdrop-filter: blur(12px);
-            padding: 25px 20px;
-            border-radius: 24px;
-            box-shadow: var(--glass-shadow);
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            border-radius: 20px;
+            padding: 30px;
+            margin-bottom: 25px;
             border: 1px solid var(--glass-border);
-            margin-bottom: 20px;
-            animation: slideUp .6s cubic-bezier(.2, .8, .2, 1)
+            box-shadow: 0 0 20px rgba(0, 243, 255, 0.1), inset 0 0 0 1px rgba(255, 255, 255, 0.05);
+            position: relative;
+            overflow: hidden;
+            transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1), box-shadow 0.3s;
+        }
+
+        /* Interactive Card Hover (Liquid Feel) */
+        .card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, var(--liquid-highlight), transparent);
+            transition: 0.5s;
+            transform: skewX(-25deg);
+            pointer-events: none;
+        }
+
+        .card:hover::before {
+            left: 100%;
+            transition: 0.7s;
+        }
+
+        .card:hover {
+            transform: translateY(-5px) scale(1.01);
+            box-shadow: 0 15px 30px rgba(188, 19, 254, 0.2), 0 0 20px rgba(0, 243, 255, 0.2);
+            border-color: var(--neon-cyan);
+        }
+
+        /* --- Typography --- */
+        h1,
+        h3,
+        h4 {
+            font-family: 'Kanit', sans-serif;
+            /* เปลี่ยนจาก Orbitron เป็น Kanit เพื่อรองรับไทยสวยๆ */
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            text-align: center;
         }
 
         h1 {
-            text-align: center;
-            color: var(--primary);
-            margin: 0 0 15px 0;
-            font-weight: 600;
-            font-size: 1.6rem;
-            text-shadow: 0 2px 4px rgba(255, 255, 255, .5)
+            background: linear-gradient(to right, var(--neon-cyan), #fff, var(--neon-magenta));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            font-weight: 900;
+            font-size: 1.8rem;
+            margin-bottom: 25px;
+            text-shadow: 0 0 10px rgba(0, 243, 255, 0.5);
+            line-height: 1.3;
         }
 
         label {
-            font-size: .95rem;
-            color: var(--text-main);
+            color: var(--neon-cyan);
+            font-size: 1rem;
             margin-top: 15px;
-            margin-bottom: 8px;
             display: block;
-            font-weight: 500
+            font-weight: 500;
+            /* text-transform: uppercase; */
+            letter-spacing: 0.5px;
         }
 
-        .row-inputs {
-            display: flex;
-            gap: 10px;
-            align-items: flex-end
-        }
-
+        /* --- Holographic Inputs --- */
         input,
         select {
             width: 100%;
-            padding: 12px 14px;
-            margin-bottom: 5px;
-            border: 1px solid rgba(74, 144, 226, .3);
-            border-radius: 12px;
-            font-family: Kanit;
-            font-size: 16px;
-            background-color: rgba(255, 255, 255, .6);
-            transition: all .2s;
+            padding: 12px 15px;
+            margin-bottom: 10px;
+            background: rgba(0, 0, 0, 0.3);
+            border: 1px solid rgba(0, 243, 255, 0.3);
+            border-radius: 8px;
+            color: #fff;
+            font-family: 'Kanit';
+            font-size: 1rem;
+            transition: all 0.3s ease;
             box-sizing: border-box;
-            color: var(--text-main);
+            appearance: none;
+            /* Standardize appearance */
             -webkit-appearance: none;
-            appearance: none
-        }
-
-        input[type=date] {
-            cursor: pointer;
-            position: relative
-        }
-
-        select {
-            background-image: url("data:image/svg+xml;charset=US-ASCII,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%22292.4%22%20height%3D%22292.4%22%3E%3Cpath%20fill%3D%22%234A90E2%22%20d%3D%22M287%2069.4a17.6%2017.6%200%200%200-13-5.4H18.4c-5%200-9.3%201.8-12.9%205.4A17.6%2017.6%200%200%200%200%2082.2c0%205%201.8%209.3%205.4%2012.9l128%20127.9c3.6%203.6%207.8%205.4%2012.8%205.4s9.2-1.8%2012.8-5.4L287%2095c3.5-3.5%205.4-7.8%205.4-12.8%200-5-1.9-9.2-5.5-12.8z%22%2F%3E%3C%2Fsvg%3E");
-            background-repeat: no-repeat;
-            background-position: right 1em top 50%;
-            background-size: .8em auto;
-            padding-right: 2.5em
         }
 
         input:focus,
         select:focus {
-            border-color: var(--primary);
-            outline: 0;
-            background-color: #fff;
-            box-shadow: 0 0 0 4px rgba(74, 144, 226, .15)
+            outline: none;
+            border-color: var(--neon-magenta);
+            box-shadow: 0 0 15px var(--neon-magenta);
+            background: rgba(0, 0, 0, 0.5);
+            transform: scale(1.02);
         }
 
+        /* Fix Date Picker Icon Color */
+        ::-webkit-calendar-picker-indicator {
+            filter: invert(1) drop-shadow(0 0 2px var(--neon-cyan));
+            cursor: pointer;
+        }
+
+        .row-inputs {
+            display: flex;
+            gap: 15px;
+        }
+
+        /* --- Warp Speed Buttons --- */
         button {
             width: 100%;
-            padding: 14px;
-            margin-top: 20px;
+            padding: 15px;
+            margin-top: 25px;
             border: none;
-            border-radius: 14px;
-            font-family: Kanit;
-            font-size: 1.1rem;
-            font-weight: 600;
+            border-radius: 50px;
+            /* Pill shape */
+            font-family: 'Kanit', sans-serif;
+            font-size: 1.2rem;
+            font-weight: bold;
             cursor: pointer;
-            transition: .2s;
-            background: linear-gradient(135deg, var(--primary) 0, var(--primary-dark) 100%);
-            color: #fff;
-            box-shadow: 0 4px 15px rgba(74, 144, 226, .4);
             position: relative;
             overflow: hidden;
-            -webkit-user-select: none
+            background: transparent;
+            color: var(--neon-cyan);
+            border: 2px solid var(--neon-cyan);
+            transition: all 0.3s ease;
+            z-index: 1;
+            touch-action: manipulation;
+            /* Improves touch response */
         }
 
-        button:active {
-            transform: scale(.97)
+        button::before {
+            content: "";
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 0%;
+            height: 100%;
+            background: var(--neon-cyan);
+            z-index: -1;
+            transition: all 0.3s ease;
+            box-shadow: 0 0 20px var(--neon-cyan);
+        }
+
+        button:hover {
+            color: #000;
+            letter-spacing: 1px;
+            /* Warp effect */
+            box-shadow: 0 0 30px var(--neon-cyan);
+        }
+
+        button:hover::before {
+            width: 100%;
         }
 
         button:disabled {
-            background: #bdc3c7;
-            color: #7f8c8d;
-            box-shadow: none;
+            border-color: #555;
+            color: #555;
             cursor: not-allowed;
-            transform: none
+            box-shadow: none;
         }
 
+        /* Summary Button (Guardians Style - Magenta) */
         button.cal-btn {
-            background: linear-gradient(135deg, #2ecc71 0, #27ae60 100%);
-            box-shadow: 0 4px 15px rgba(46, 204, 113, .4);
-            margin-top: 15px
+            border-color: var(--neon-magenta);
+            color: var(--neon-magenta);
         }
 
+        button.cal-btn::before {
+            background: var(--neon-magenta);
+            box-shadow: 0 0 20px var(--neon-magenta);
+        }
+
+        button.cal-btn:hover {
+            color: #fff;
+            box-shadow: 0 0 30px var(--neon-magenta);
+        }
+
+        /* --- Calendar Grid --- */
         .calendar-header {
             display: flex;
             justify-content: space-between;
             align-items: center;
-            margin-bottom: 10px;
-            font-weight: 600;
-            font-size: 1.1rem;
-            background: rgba(255, 255, 255, .4);
-            padding: 8px;
-            border-radius: 12px
+            margin-bottom: 15px;
+            background: rgba(0, 243, 255, 0.1);
+            padding: 10px;
+            border-radius: 10px;
+            border: 1px solid rgba(0, 243, 255, 0.2);
         }
 
         .calendar-nav-btn {
-            background: #fff;
-            border: none;
-            width: 32px;
-            height: 32px;
-            border-radius: 50%;
-            cursor: pointer;
-            color: var(--primary);
-            box-shadow: 0 2px 5px rgba(0, 0, 0, .05);
+            width: 35px;
+            height: 35px;
             margin: 0;
             padding: 0;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.1);
+            border: none;
+            color: #fff;
             display: flex;
             align-items: center;
-            justify-content: center
+            justify-content: center;
+            cursor: pointer;
+        }
+
+        .calendar-nav-btn:hover {
+            background: var(--neon-cyan);
+            color: #000;
+            letter-spacing: normal;
+            box-shadow: 0 0 10px var(--neon-cyan);
         }
 
         .calendar-grid {
             display: grid;
             grid-template-columns: repeat(7, 1fr);
-            gap: 4px;
-            text-align: center
+            gap: 8px;
+            text-align: center;
         }
 
         .day-name {
-            font-size: .8rem;
-            color: #888;
-            padding-bottom: 5px;
-            font-weight: 500
+            color: var(--neon-cyan);
+            font-size: 0.9rem;
+            font-weight: bold;
         }
 
         .calendar-day {
@@ -210,210 +297,339 @@
             display: flex;
             align-items: center;
             justify-content: center;
-            border-radius: 10px;
+            border-radius: 8px;
             cursor: pointer;
-            position: relative;
-            background: rgba(255, 255, 255, .4);
-            font-size: 1rem;
-            transition: .1s
+            background: rgba(255, 255, 255, 0.05);
+            transition: all 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            /* Bouncy effect */
+            border: 1px solid transparent;
+            user-select: none;
         }
 
-        .calendar-day:active {
-            transform: scale(.9)
-        }
-
-        .calendar-day.empty {
-            background: 0 0;
-            cursor: default
+        .calendar-day:hover {
+            transform: scale(1.15) rotate(5deg);
+            background: rgba(255, 255, 255, 0.15);
+            border-color: var(--neon-magenta);
+            box-shadow: 0 0 15px var(--neon-magenta);
+            z-index: 10;
         }
 
         .calendar-day.has-event {
-            background: #e8f8f5;
-            color: #2ecc71;
-            border: 1px solid #2ecc71;
-            font-weight: 600
+            border: 1px solid var(--neon-cyan);
+            color: var(--neon-cyan);
+            background: rgba(0, 243, 255, 0.1);
+            box-shadow: 0 0 5px var(--neon-cyan);
         }
 
         .calendar-day.selected {
-            background: var(--primary);
+            background: var(--neon-magenta);
             color: #fff;
-            border: 1px solid var(--primary)
+            box-shadow: 0 0 20px var(--neon-magenta);
+            border-color: #fff;
+            transform: scale(1.1);
         }
 
-        .date-details-box {
-            margin-top: 20px;
+        /* --- Details & Results --- */
+        .date-details-box,
+        .result-box {
+            background: rgba(0, 0, 0, 0.4);
+            border: 1px solid var(--glass-border);
+            border-left: 4px solid var(--neon-cyan);
             padding: 15px;
-            background: rgba(255, 255, 255, .9);
-            border-radius: 16px;
-            box-shadow: 0 4px 15px rgba(0, 0, 0, .05);
-            display: none;
-            animation: slideUp .3s
+            border-radius: 10px;
+            margin-top: 20px;
+            animation: slideIn 0.4s ease;
+        }
+
+        .result-box {
+            border-left: 4px solid var(--neon-magenta);
+            border-style: solid;
         }
 
         .detail-item {
             display: flex;
             justify-content: space-between;
-            padding: 10px 0;
-            border-bottom: 1px solid #f0f0f0
-        }
-
-        .detail-item:last-child {
-            border-bottom: none
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+            padding: 8px 0;
         }
 
         .footer-wrapper {
             text-align: center;
             margin-top: 30px;
-            margin-bottom: 10px
-        }
-
-        .credit-badge {
-            display: inline-block;
-            background: rgba(255, 255, 255, .8);
-            padding: 6px 16px;
-            border-radius: 50px;
-            font-size: .85rem;
-            color: var(--text-main);
-            box-shadow: 0 4px 10px rgba(0, 0, 0, .05);
-            font-weight: 500;
-            backdrop-filter: blur(4px)
-        }
-
-        .credit-badge span {
-            color: #e74c3c
+            opacity: 0.7;
         }
 
         .warning-text {
+            color: var(--star-gold);
+            font-size: 0.8rem;
+            margin-top: 5px;
             display: block;
-            margin-top: 8px;
-            font-size: .75rem;
-            color: #888
         }
 
-        @keyframes slideUp {
+        @keyframes slideIn {
             from {
                 opacity: 0;
-                transform: translateY(20px)
+                transform: translateY(20px);
             }
 
             to {
                 opacity: 1;
-                transform: translateY(0)
+                transform: translateY(0);
             }
         }
 
-        @media (max-width:480px) {
+        /* --- Responsive Styles (New & Improved) --- */
+
+        /* Tablet & Small Laptop (max-width: 768px) */
+        @media (max-width: 768px) {
             .container {
-                width: 94%;
-                padding-left: 10px;
-                padding-right: 10px
+                padding: 30px 15px;
+                /* ลด Padding ด้านข้าง */
             }
 
             .card {
-                padding: 20px 15px
+                padding: 20px;
+                /* ลด Padding ใน Card */
             }
 
             h1 {
-                font-size: 1.4rem
+                font-size: 1.5rem;
+                /* ลดขนาดหัวข้อ */
             }
 
-            .row-inputs.date-group {
+            .calendar-grid {
+                gap: 5px;
+                /* ลดระยะห่างตารางปฏิทิน */
+            }
+
+            button {
+                font-size: 1rem;
+                /* ปรับขนาดตัวอักษรปุ่ม */
+                padding: 12px;
+            }
+        }
+
+        /* Mobile Phones (max-width: 480px) */
+        @media (max-width: 480px) {
+            .row-inputs {
                 flex-direction: column;
-                gap: 5px
+                /* เรียง Input แนวตั้งบนมือถือ */
+                gap: 10px;
             }
 
-            .row-inputs.time-group {
-                flex-direction: column;
-                gap: 15px
+            .calendar-day {
+                font-size: 0.9rem;
+                /* ปรับขนาดวันที่ให้อ่านง่าย */
+                border-radius: 6px;
             }
 
-            .row-inputs.time-group>div {
-                width: 100% !important
+            .day-name {
+                font-size: 0.8rem;
+            }
+
+            /* ป้องกัน iOS ซูมตอนกด Input */
+            input,
+            select {
+                font-size: 16px;
+                padding: 10px;
+            }
+
+            h1 {
+                font-size: 1.3rem;
+                margin-bottom: 20px;
+            }
+
+            .card {
+                padding: 15px;
+                /* เพิ่มพื้นที่บนจอมือถือเล็ก */
+                margin-bottom: 20px;
+            }
+
+            .calendar-header {
+                padding: 8px;
+            }
+
+            #month-year-label {
+                font-size: 1rem !important;
             }
         }
     </style>
+</head>
+
+<body>
+
     <div id="canvas-container"></div>
+
     <div class="container">
+        <!-- Input Card -->
         <div class="card">
-            <h1>📅 นัดวันว่าง</h1><label>👤 ชื่อของคุณ</label><input id="name"
-                placeholder="ชื่อเล่น (เช่น อาร์มสุดหล่อ)"><label>🗓️ เลือกวันที่ว่าง</label>
-            <div class="row-inputs date-group"><input id="startDate" onclick="this.showPicker()" onkeydown="return!1"
-                    type="date"><span
-                    style="padding-bottom:12px;color:#888;font-size:.9rem;align-self:center">ถึง</span><input
-                    id="endDate" onclick="this.showPicker()" onkeydown="return!1" type="date"></div><label>⏰ ช่วงเวลา
-                (24 ชม.)</label>
-            <div class="row-inputs time-group">
-                <div style="width:50%"><small style="color:var(--text-secondary)">ตั้งแต่</small><select
-                        id="startTime"></select></div>
-                <div style="width:50%"><small style="color:var(--text-secondary)">ถึงเวลา</small><select
-                        id="endTime"></select></div>
-            </div><button onclick="submitData()" id="submitBtn">🚀 ยืนยันข้อมูล</button>
-        </div>
-        <div class="card">
-            <h3>🗓️ ปฏิทินวันว่างเพื่อน</h3>
-            <div id="loading" style="text-align:center;color:#666;padding:20px">
-                <div style="font-size:2rem">⏳</div>กำลังโหลดข้อมูล...
+            <h1>ภารกิจ: ตามหาเวลาว่าง</h1>
+
+            <label>ชื่อ</label>
+            <input id="name" placeholder="เช่น น้องซี">
+
+            <label>เลือกวันว่าง</label>
+            <div class="row-inputs">
+                <input id="startDate" type="date" onclick="this.showPicker()">
+                <span style="align-self:center; color: var(--neon-cyan)">ถึง</span>
+                <input id="endDate" type="date" onclick="this.showPicker()">
             </div>
+
+            <label>ช่วงเวลาที่ว่าง</label>
+            <div class="row-inputs">
+                <div style="width:100%">
+                    <small style="color:rgba(255,255,255,0.6)">เริ่ม</small>
+                    <select id="startTime"></select>
+                </div>
+                <div style="width:100%">
+                    <small style="color:rgba(255,255,255,0.6)">สิ้นสุด</small>
+                    <select id="endTime"></select>
+                </div>
+            </div>
+
+            <button onclick="submitData()" id="submitBtn">ยืนยัน</button>
+        </div>
+
+        <!-- Calendar Card -->
+        <div class="card">
+            <h3>ตารางวันว่าง</h3>
+
+            <div id="loading" style="text-align:center; padding:20px; color: var(--neon-cyan)">
+                <div style="font-size:2rem; animation: spin 2s linear infinite">⚛️</div>
+                <p>กำลังเชื่อมต่อสัญญาณ...</p>
+            </div>
+
             <div id="calendar-wrapper" style="display:none">
-                <div class="calendar-header"><button onclick="changeMonth(-1)" class="calendar-nav-btn">❮</button><span
-                        id="month-year-label"></span><button onclick="changeMonth(1)"
-                        class="calendar-nav-btn">❯</button></div>
+                <div class="calendar-header">
+                    <button onclick="changeMonth(-1)" class="calendar-nav-btn">❮</button>
+                    <span id="month-year-label"
+                        style="font-family:'Kanit'; font-size: 1.2rem; color: var(--neon-cyan)"></span>
+                    <button onclick="changeMonth(1)" class="calendar-nav-btn">❯</button>
+                </div>
+
                 <div class="calendar-grid">
-                    <div class="day-name">อา</div>
-                    <div class="day-name">จ</div>
-                    <div class="day-name">อ</div>
-                    <div class="day-name">พ</div>
-                    <div class="day-name">พฤ</div>
-                    <div class="day-name">ศ</div>
-                    <div class="day-name">ส</div>
+                    <div class="day-name">อา.</div>
+                    <div class="day-name">จ.</div>
+                    <div class="day-name">อ.</div>
+                    <div class="day-name">พ.</div>
+                    <div class="day-name">พฤ.</div>
+                    <div class="day-name">ศ.</div>
+                    <div class="day-name">ส.</div>
                 </div>
                 <div class="calendar-grid" id="calendar-days"></div>
             </div>
-            <div class="date-details-box" id="selectedDateDetails">
-                <h4 id="detail-date-title" style="margin:0 0 10px 0;color:var(--primary)"></h4>
+
+            <div class="date-details-box" id="selectedDateDetails" style="display:none">
+                <h4 id="detail-date-title" style="margin:0 0 10px 0; color: var(--star-gold)"></h4>
                 <div id="detail-list"></div>
-            </div><button onclick="findCommonTime()" class="cal-btn" id="summaryBtn">🔍 สรุปวันยอดฮิต
-                (อัปเดตล่าสุด)</button>
-            <div class="result-box" id="bestTime"
-                style="display:none;margin-top:15px;padding:15px;background:rgba(232,248,245,.9);border-radius:10px;border:2px dashed #2ecc71;text-align:center">
             </div>
+
+            <button onclick="findCommonTime()" class="cal-btn" id="summaryBtn">สแกนหาเวลาที่ตรงกัน</button>
+
+            <div class="result-box" id="bestTime" style="display:none; text-align:center"></div>
         </div>
+
         <div class="footer-wrapper">
-            <div class="credit-badge">⚡ Developed by<strong>Arm</strong><span>❤️</span></div><span
-                class="warning-text">*กดปุ่มสรุปวันยอดฮิต เพื่อดึงข้อมูลล่าสุดนะจ๊ะ</span>
+            <div style="font-family: 'Orbitron'; font-size: 0.8rem; color: #fff;">
+                SYSTEMS BY <span style="color: var(--neon-cyan)">ARM</span>
+            </div>
+            <span class="warning-text">* กดปุ่ม 'สแกนหาเวลา' เพื่อดูข้อมูลล่าสุด</span>
         </div>
     </div>
-    <script>const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbyNv4P-rNP8zrNZC7Lpjmq8cMpHbRUHE0iZijzDT7OhlRvrXc0i4zH6TgCc3Ttzgc69/exec';
 
+    <script>
+        const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbyNv4P-rNP8zrNZC7Lpjmq8cMpHbRUHE0iZijzDT7OhlRvrXc0i4zH6TgCc3Ttzgc69/exec';
         let isSubmitting = false;
 
+        // --- Three.js Background (Galaxy Particles) ---
         function initThreeJS() {
             const container = document.getElementById('canvas-container');
             const scene = new THREE.Scene();
             const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
             const renderer = new THREE.WebGLRenderer({ alpha: true, antialias: true });
+
             renderer.setSize(window.innerWidth, window.innerHeight);
             renderer.setPixelRatio(window.devicePixelRatio);
             container.appendChild(renderer.domElement);
 
-            const geometry = new THREE.BufferGeometry();
-            const count = 1500;
-            const positions = new Float32Array(count * 3);
-            for (let i = 0; i < count * 3; i++) { positions[i] = (Math.random() - 0.5) * 20; }
-            geometry.setAttribute('position', new THREE.BufferAttribute(positions, 3));
+            // Create Star Particles
+            const starsGeometry = new THREE.BufferGeometry();
+            const starsCount = 2000;
+            const posArray = new Float32Array(starsCount * 3);
+            const colorsArray = new Float32Array(starsCount * 3);
 
-            const material = new THREE.PointsMaterial({ size: 0.05, color: 0x4A90E2, transparent: true, opacity: 0.6, sizeAttenuation: true });
-            const particles = new THREE.Points(geometry, material);
-            scene.add(particles);
+            for (let i = 0; i < starsCount * 3; i += 3) {
+                // Positions
+                posArray[i] = (Math.random() - 0.5) * 30; // x
+                posArray[i + 1] = (Math.random() - 0.5) * 30; // y
+                posArray[i + 2] = (Math.random() - 0.5) * 30; // z
+
+                // Colors (Mix of Cyan and Magenta)
+                const isCyan = Math.random() > 0.5;
+                colorsArray[i] = isCyan ? 0 : 0.7; // R
+                colorsArray[i + 1] = isCyan ? 0.9 : 0.1; // G
+                colorsArray[i + 2] = isCyan ? 1 : 1; // B
+            }
+
+            starsGeometry.setAttribute('position', new THREE.BufferAttribute(posArray, 3));
+            starsGeometry.setAttribute('color', new THREE.BufferAttribute(colorsArray, 3));
+
+            const starsMaterial = new THREE.PointsMaterial({
+                size: 0.03,
+                vertexColors: true,
+                transparent: true,
+                opacity: 0.8,
+                blending: THREE.AdditiveBlending
+            });
+
+            const starMesh = new THREE.Points(starsGeometry, starsMaterial);
+            scene.add(starMesh);
+
             camera.position.z = 5;
+
+            // Mouse Interaction
+            let mouseX = 0;
+            let mouseY = 0;
+            let targetX = 0;
+            let targetY = 0;
+
+            const windowHalfX = window.innerWidth / 2;
+            const windowHalfY = window.innerHeight / 2;
+
+            document.addEventListener('mousemove', (event) => {
+                mouseX = (event.clientX - windowHalfX);
+                mouseY = (event.clientY - windowHalfY);
+            });
+
+            // Separate Auto-rotation from Mouse-interaction
+            let autoRotX = 0;
+            let autoRotY = 0;
+            let smoothMouseX = 0;
+            let smoothMouseY = 0;
 
             function animate() {
                 requestAnimationFrame(animate);
-                particles.rotation.y += 0.001;
-                particles.rotation.x += 0.0005;
+
+                // 1. Auto Rotate (Everyone gets this)
+                autoRotY += 0.0005;
+                autoRotX += 0.0002;
+
+                // 2. Mouse Calculations (Only affects values if mouse moves)
+                targetX = mouseX * 0.001;
+                targetY = mouseY * 0.001;
+
+                // Smooth out mouse movement (lerp)
+                smoothMouseX += 0.05 * (targetX - smoothMouseX);
+                smoothMouseY += 0.05 * (targetY - smoothMouseY);
+
+                // 3. Combine both
+                starMesh.rotation.y = autoRotY + smoothMouseX;
+                starMesh.rotation.x = autoRotX + smoothMouseY;
+
                 renderer.render(scene, camera);
             }
             animate();
+
             window.addEventListener('resize', () => {
                 camera.aspect = window.innerWidth / window.innerHeight;
                 camera.updateProjectionMatrix();
@@ -427,6 +643,7 @@
             loadData();
         };
 
+        // --- Logic (Translated) ---
         function generateTimeOptions() {
             const startSelect = document.getElementById('startTime');
             const endSelect = document.getElementById('endTime');
@@ -439,7 +656,7 @@
                     options += `<option value="${time}">${time}</option>`;
                 }
             }
-            options += `<option value="00:00">00:00 (เที่ยงคืน)</option>`;
+            options += `<option value="00:00">00:00</option>`;
             startSelect.innerHTML = options;
             endSelect.innerHTML = options;
             startSelect.value = "19:00";
@@ -455,22 +672,18 @@
             const sTime = document.getElementById('startTime').value;
             const eTime = document.getElementById('endTime').value;
 
-            if (!name || !sDate || !eDate) return alert("⚠️ อย่าลืมใส่ชื่อและวันที่ สิคร๊าบบ พับผ่าสิ");
-            if (sDate > eDate) return alert("⚠️ วันที่เริ่ม ต้องมาก่อน หรือวันเดียวกับ วันที่สิ้นสุด กรอกผิด หรือ กวนตีนครับเนี่ยยย");
+            if (!name || !sDate || !eDate) return alert("⚠️ ข้อมูลไม่ครบ: กรุณาระบุชื่อและวันที่ให้ครบถ้วน");
+            if (sDate > eDate) return alert("⚠️ ข้อผิดพลาด: มิติเวลาบิดเบี้ยว (วันเริ่มต้องมาก่อนวันจบ)");
 
             isSubmitting = true;
             const btn = document.getElementById('submitBtn');
             const originalText = btn.innerText;
 
-            btn.innerHTML = "⏳ กำลังบันทึก... (ห้ามกดซ้ำ)";
+            btn.innerHTML = "📡 กำลังส่งข้อมูลไปยังฐานทัพ...";
             btn.disabled = true;
 
             let timeString = `${sTime} - ${eTime}`;
-
-            // --- แก้ไขตรงนี้ครับ ---
-            // ตัดเงื่อนไขเช็ควันเดียวกันออก ให้ส่งรูปแบบ range เสมอ
             let dateToSend = `${sDate} ถึง ${eDate}`;
-            // ---------------------
 
             try {
                 await fetch(SCRIPT_URL, {
@@ -489,12 +702,12 @@
 
                 renderCalendar(currentMonth, currentYear);
                 document.getElementById('name').value = '';
-                alert(`✅ บันทึกแล้ว! ฮ๊าฟฟู้วว`);
+                alert(`✅ บันทึกข้อมูลสำเร็จ! ภารกิจถูกอัปเดตแล้ว`);
                 document.querySelector('.calendar-header').scrollIntoView({ behavior: 'smooth' });
 
             } catch (err) {
                 console.error(err);
-                alert("❌ เกิดข้อผิดพลาดในการเชื่อมต่อ ของฟรีต้องทำใจ รีเฟรชอาจจะหาย มั้ง");
+                alert("❌ การส่งข้อมูลล้มเหลว กรุณาตรวจสอบสัญญาณ");
             } finally {
                 btn.innerHTML = originalText;
                 btn.disabled = false;
@@ -534,7 +747,7 @@
                     renderCalendar(currentMonth, currentYear);
                 })
                 .catch(err => {
-                    document.getElementById('loading').innerText = "โหลดข้อมูลไม่สำเร็จ 😅 ยิ้มแห้งเลย แล้วกูทำไงดีละทีนี้";
+                    document.getElementById('loading').innerHTML = "<span style='color:red'>สัญญาณขาดหาย กำลังเชื่อมต่อใหม่...</span>";
                 });
         }
 
@@ -563,8 +776,12 @@
             const label = document.getElementById('month-year-label');
             daysContainer.innerHTML = "";
 
-            const thaiMonths = ["มกราคม", "กุมภาพันธ์", "มีนาคม", "เมษายน", "พฤษภาคม", "มิถุนายน", "กรกฎาคม", "สิงหาคม", "กันยายน", "ตุลาคม", "พฤศจิกายน", "ธันวาคม"];
-            label.innerText = `${thaiMonths[month]} ${year + 543}`;
+            const thaiMonths = [
+                "มกราคม", "กุมภาพันธ์", "มีนาคม", "เมษายน", "พฤษภาคม", "มิถุนายน",
+                "กรกฎาคม", "สิงหาคม", "กันยายน", "ตุลาคม", "พฤศจิกายน", "ธันวาคม"
+            ];
+
+            label.innerText = `${thaiMonths[month]} ${year}`;
 
             const firstDay = new Date(year, month, 1).getDay();
             const daysInMonth = new Date(year, month + 1, 0).getDate();
@@ -598,23 +815,23 @@
             const detailBox = document.getElementById('selectedDateDetails');
             const title = document.getElementById('detail-date-title');
             const list = document.getElementById('detail-list');
-            const thaiMonths = ["ม.ค.", "ก.พ.", "มี.ค.", "เม.ย.", "พ.ค.", "มิ.ย.", "ก.ค.", "ส.ค.", "ก.ย.", "ต.ค.", "พ.ย.", "ธ.ค."];
+            const thaiMonthsShort = ["ม.ค.", "ก.พ.", "มี.ค.", "เม.ย.", "พ.ค.", "มิ.ย.", "ก.ค.", "ส.ค.", "ก.ย.", "ต.ค.", "พ.ย.", "ธ.ค."];
 
-            title.innerText = `รายชื่อคนว่างวันที่ ${day} ${thaiMonths[month]} ${year + 543}`;
+            title.innerText = `บันทึกวันที่: ${day} ${thaiMonthsShort[month]} ${year}`;
             list.innerHTML = "";
 
             if (processedEvents[dateKey]) {
                 processedEvents[dateKey].forEach(item => {
                     list.innerHTML += `
                         <div class="detail-item">
-                            <span style="font-weight:600;">${item.name}</span>
-                            <span style="color:#666; font-size:0.9em;">${item.time}</span>
+                            <span style="font-weight:600; color:#fff;">${item.name}</span>
+                            <span style="color:var(--neon-cyan); font-size:0.9em;">${item.time}</span>
                         </div>
                     `;
                 });
                 detailBox.style.display = 'block';
             } else {
-                list.innerHTML = `<div style="text-align:center; color:#999; padding:10px;">ไม่มีใครลงชื่อวันนี้ 😴</div>`;
+                list.innerHTML = `<div style="text-align:center; color:#888; padding:10px;">ยังไม่มีนักบินลงเวลา</div>`;
                 detailBox.style.display = 'block';
             }
         }
@@ -632,29 +849,24 @@
             document.getElementById('selectedDateDetails').style.display = 'none';
         }
 
-        // --- แก้ไขฟังก์ชันนี้ให้ Fetch Data ใหม่ก่อนสรุป ---
         async function findCommonTime() {
             const btn = document.getElementById('summaryBtn');
             const originalText = btn.innerHTML;
             const box = document.getElementById('bestTime');
 
-            // 1. เปลี่ยนปุ่มเป็น Loading
-            btn.innerHTML = "⏳ กำลังดึงข้อมูลล่าสุด...";
+            btn.innerHTML = "⏳ กำลังสแกน...";
             btn.disabled = true;
 
             try {
-                // 2. Fetch ข้อมูลใหม่ (เหมือน loadData)
                 const response = await fetch(SCRIPT_URL);
                 const data = await response.json();
 
-                // 3. อัปเดตข้อมูลในตัวแปร global และหน้าปฏิทิน
                 window.allDataCache = data;
                 processEventsData(data);
-                renderCalendar(currentMonth, currentYear); // รีเฟรชจุดเขียวบนปฏิทินด้วย
+                renderCalendar(currentMonth, currentYear);
 
-                // 4. เริ่มคำนวณวันยอดฮิต (Logic เดิม)
                 if (Object.keys(processedEvents).length === 0) {
-                    alert("ยังไม่มีข้อมูลเพื่อนเลยจ้าาาา");
+                    alert("ไม่พบข้อมูลในเซกเตอร์นี้");
                     box.style.display = 'none';
                     return;
                 }
@@ -663,14 +875,8 @@
                 for (let dateKey in processedEvents) {
                     let people = processedEvents[dateKey];
                     let count = people.length;
-
                     let d = new Date(dateKey);
-                    let prettyDate = d.toLocaleDateString('th-TH', {
-                        weekday: 'short',
-                        day: 'numeric',
-                        month: 'short',
-                        year: '2-digit'
-                    });
+                    let prettyDate = d.toLocaleDateString('th-TH', { day: 'numeric', month: 'short', year: 'numeric' });
 
                     dateCounts.push({
                         rawDate: dateKey,
@@ -686,18 +892,18 @@
 
                 box.style.display = 'block';
 
-                let html = `<div style="margin-bottom:10px; font-size:1.1rem;">🏆 <b>วันยอดฮิต (ว่าง ${maxVal} คน):</b></div>`;
+                let html = `<div style="margin-bottom:10px; font-size:1.1rem; color: var(--star-gold)">🏆 <b>พิกัดเวลาที่ดีที่สุด (${maxVal} คน):</b></div>`;
 
                 winners.forEach(w => {
                     let peopleList = w.people.map(p =>
-                        `<li style="text-align:left; font-size:0.9rem; color:#555; margin-top:4px;">
-                            <strong>${p.name}</strong> <span style="font-size:0.8em; color:#888;">(${p.time})</span>
+                        `<li style="text-align:left; font-size:0.9rem; color:#ccc; margin-top:4px;">
+                            <strong style="color: var(--neon-cyan)">${p.name}</strong> <span style="font-size:0.8em; color:#888;">(${p.time})</span>
                         </li>`
                     ).join("");
 
                     html += `
-                        <div style="margin-top:15px; padding:15px; background:rgba(255,255,255,0.8); border-radius:12px; box-shadow:0 4px 10px rgba(0,0,0,0.05); border-left: 5px solid #2ECC71;">
-                            <h3 style="margin:0 0 10px 0; color:#2C3E50;">${w.displayDate}</h3>
+                        <div style="margin-top:15px; padding:15px; background:rgba(255,255,255,0.05); border-radius:12px; border-left: 5px solid var(--neon-magenta);">
+                            <h3 style="margin:0 0 10px 0; color:#fff;">${w.displayDate}</h3>
                             <ul style="margin:0; padding-left:20px;">
                                 ${peopleList}
                             </ul>
@@ -712,10 +918,13 @@
 
             } catch (err) {
                 console.error(err);
-                alert("❌ เกิดข้อผิดพลาดในการดึงข้อมูลล่าสุด กูก็ไม่รู้ว่าเกิดไรขึ้น ลองรีเฟรชดู");
+                alert("❌ การสแกนล้มเหลว");
             } finally {
-                // 5. คืนค่าปุ่มกลับสู่สภาพเดิม
                 btn.innerHTML = originalText;
                 btn.disabled = false;
             }
-        }</script>
+        }
+    </script>
+</body>
+
+</html>
