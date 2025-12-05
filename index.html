@@ -1,16 +1,12 @@
-<!DOCTYPE html>
-<html lang="th">
-
-<head>
+<!doctypehtml>
+    <html lang="th">
     <meta charset="UTF-8">
-    <meta name="viewport"
-        content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+    <meta content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no,viewport-fit=cover"
+        name="viewport">
     <title>นัดวันว่างให้ตรงกับอาร์มทีเถอะไหว้หล่ะ</title>
     <link href="https://fonts.googleapis.com/css2?family=Kanit:wght@300;400;500;600&display=swap" rel="stylesheet">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
-
     <style>
-        /* CSS Variables */
         :root {
             --primary: #4A90E2;
             --primary-dark: #357ABD;
@@ -21,18 +17,18 @@
             --glass-border: rgba(255, 255, 255, 0.9);
             --glass-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.15);
             --safe-area-top: env(safe-area-inset-top);
-            --safe-area-bottom: env(safe-area-inset-bottom);
+            --safe-area-bottom: env(safe-area-inset-bottom)
         }
 
         body {
-            font-family: 'Kanit', sans-serif;
+            font-family: Kanit, sans-serif;
             margin: 0;
             padding: 0;
             overflow-x: hidden;
             background-color: #f0f4f8;
             color: var(--text-main);
             -webkit-text-size-adjust: 100%;
-            -webkit-tap-highlight-color: transparent;
+            -webkit-tap-highlight-color: transparent
         }
 
         #canvas-container {
@@ -43,7 +39,7 @@
             height: 100%;
             z-index: -1;
             background: radial-gradient(circle at center, #dceefc, #bfdfff);
-            pointer-events: none;
+            pointer-events: none
         }
 
         .container {
@@ -53,7 +49,7 @@
             margin: 0 auto;
             position: relative;
             z-index: 1;
-            padding: calc(20px + var(--safe-area-top)) 15px calc(20px + var(--safe-area-bottom)) 15px;
+            padding: calc(20px + var(--safe-area-top)) 15px calc(20px + var(--safe-area-bottom)) 15px
         }
 
         .card {
@@ -65,7 +61,7 @@
             box-shadow: var(--glass-shadow);
             border: 1px solid var(--glass-border);
             margin-bottom: 20px;
-            animation: slideUp 0.6s cubic-bezier(0.2, 0.8, 0.2, 1);
+            animation: slideUp .6s cubic-bezier(.2, .8, .2, 1)
         }
 
         h1 {
@@ -74,22 +70,22 @@
             margin: 0 0 15px 0;
             font-weight: 600;
             font-size: 1.6rem;
-            text-shadow: 0 2px 4px rgba(255, 255, 255, 0.5);
+            text-shadow: 0 2px 4px rgba(255, 255, 255, .5)
         }
 
         label {
-            font-size: 0.95rem;
+            font-size: .95rem;
             color: var(--text-main);
             margin-top: 15px;
             margin-bottom: 8px;
             display: block;
-            font-weight: 500;
+            font-weight: 500
         }
 
         .row-inputs {
             display: flex;
             gap: 10px;
-            align-items: flex-end;
+            align-items: flex-end
         }
 
         input,
@@ -97,21 +93,21 @@
             width: 100%;
             padding: 12px 14px;
             margin-bottom: 5px;
-            border: 1px solid rgba(74, 144, 226, 0.3);
+            border: 1px solid rgba(74, 144, 226, .3);
             border-radius: 12px;
-            font-family: 'Kanit';
+            font-family: Kanit;
             font-size: 16px;
-            background-color: rgba(255, 255, 255, 0.6);
-            transition: all 0.2s;
+            background-color: rgba(255, 255, 255, .6);
+            transition: all .2s;
             box-sizing: border-box;
             color: var(--text-main);
             -webkit-appearance: none;
-            appearance: none;
+            appearance: none
         }
 
-        input[type="date"] {
+        input[type=date] {
             cursor: pointer;
-            position: relative;
+            position: relative
         }
 
         select {
@@ -119,15 +115,15 @@
             background-repeat: no-repeat;
             background-position: right 1em top 50%;
             background-size: .8em auto;
-            padding-right: 2.5em;
+            padding-right: 2.5em
         }
 
         input:focus,
         select:focus {
             border-color: var(--primary);
-            outline: none;
+            outline: 0;
             background-color: #fff;
-            box-shadow: 0 0 0 4px rgba(74, 144, 226, 0.15);
+            box-shadow: 0 0 0 4px rgba(74, 144, 226, .15)
         }
 
         button {
@@ -136,21 +132,21 @@
             margin-top: 20px;
             border: none;
             border-radius: 14px;
-            font-family: 'Kanit';
+            font-family: Kanit;
             font-size: 1.1rem;
             font-weight: 600;
             cursor: pointer;
-            transition: 0.2s;
-            background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%);
-            color: white;
-            box-shadow: 0 4px 15px rgba(74, 144, 226, 0.4);
+            transition: .2s;
+            background: linear-gradient(135deg, var(--primary) 0, var(--primary-dark) 100%);
+            color: #fff;
+            box-shadow: 0 4px 15px rgba(74, 144, 226, .4);
             position: relative;
             overflow: hidden;
-            -webkit-user-select: none;
+            -webkit-user-select: none
         }
 
         button:active {
-            transform: scale(0.97);
+            transform: scale(.97)
         }
 
         button:disabled {
@@ -158,13 +154,13 @@
             color: #7f8c8d;
             box-shadow: none;
             cursor: not-allowed;
-            transform: none;
+            transform: none
         }
 
         button.cal-btn {
-            background: linear-gradient(135deg, #2ECC71 0%, #27AE60 100%);
-            box-shadow: 0 4px 15px rgba(46, 204, 113, 0.4);
-            margin-top: 15px;
+            background: linear-gradient(135deg, #2ecc71 0, #27ae60 100%);
+            box-shadow: 0 4px 15px rgba(46, 204, 113, .4);
+            margin-top: 15px
         }
 
         .calendar-header {
@@ -174,216 +170,194 @@
             margin-bottom: 10px;
             font-weight: 600;
             font-size: 1.1rem;
-            background: rgba(255, 255, 255, 0.4);
+            background: rgba(255, 255, 255, .4);
             padding: 8px;
-            border-radius: 12px;
+            border-radius: 12px
         }
 
         .calendar-nav-btn {
-            background: white;
+            background: #fff;
             border: none;
             width: 32px;
             height: 32px;
             border-radius: 50%;
             cursor: pointer;
             color: var(--primary);
-            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05);
+            box-shadow: 0 2px 5px rgba(0, 0, 0, .05);
             margin: 0;
             padding: 0;
             display: flex;
             align-items: center;
-            justify-content: center;
+            justify-content: center
         }
 
         .calendar-grid {
             display: grid;
             grid-template-columns: repeat(7, 1fr);
             gap: 4px;
-            text-align: center;
+            text-align: center
         }
 
         .day-name {
-            font-size: 0.8rem;
+            font-size: .8rem;
             color: #888;
             padding-bottom: 5px;
-            font-weight: 500;
+            font-weight: 500
         }
 
         .calendar-day {
-            aspect-ratio: 1 / 1;
+            aspect-ratio: 1/1;
             display: flex;
             align-items: center;
             justify-content: center;
             border-radius: 10px;
             cursor: pointer;
             position: relative;
-            background: rgba(255, 255, 255, 0.4);
+            background: rgba(255, 255, 255, .4);
             font-size: 1rem;
-            transition: 0.1s;
+            transition: .1s
         }
 
         .calendar-day:active {
-            transform: scale(0.9);
+            transform: scale(.9)
         }
 
         .calendar-day.empty {
-            background: transparent;
-            cursor: default;
+            background: 0 0;
+            cursor: default
         }
 
         .calendar-day.has-event {
-            background: #E8F8F5;
-            color: #2ECC71;
-            border: 1px solid #2ECC71;
-            font-weight: 600;
+            background: #e8f8f5;
+            color: #2ecc71;
+            border: 1px solid #2ecc71;
+            font-weight: 600
         }
 
         .calendar-day.selected {
             background: var(--primary);
-            color: white;
-            border: 1px solid var(--primary);
+            color: #fff;
+            border: 1px solid var(--primary)
         }
 
         .date-details-box {
             margin-top: 20px;
             padding: 15px;
-            background: rgba(255, 255, 255, 0.9);
+            background: rgba(255, 255, 255, .9);
             border-radius: 16px;
-            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
+            box-shadow: 0 4px 15px rgba(0, 0, 0, .05);
             display: none;
-            animation: slideUp 0.3s;
+            animation: slideUp .3s
         }
 
         .detail-item {
             display: flex;
             justify-content: space-between;
             padding: 10px 0;
-            border-bottom: 1px solid #f0f0f0;
+            border-bottom: 1px solid #f0f0f0
         }
 
         .detail-item:last-child {
-            border-bottom: none;
+            border-bottom: none
         }
 
         .footer-wrapper {
             text-align: center;
             margin-top: 30px;
-            margin-bottom: 10px;
+            margin-bottom: 10px
         }
 
         .credit-badge {
             display: inline-block;
-            background: rgba(255, 255, 255, 0.8);
+            background: rgba(255, 255, 255, .8);
             padding: 6px 16px;
             border-radius: 50px;
-            font-size: 0.85rem;
+            font-size: .85rem;
             color: var(--text-main);
-            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.05);
+            box-shadow: 0 4px 10px rgba(0, 0, 0, .05);
             font-weight: 500;
-            backdrop-filter: blur(4px);
+            backdrop-filter: blur(4px)
         }
 
         .credit-badge span {
-            color: #E74C3C;
+            color: #e74c3c
         }
 
         .warning-text {
             display: block;
             margin-top: 8px;
-            font-size: 0.75rem;
-            color: #888;
+            font-size: .75rem;
+            color: #888
         }
 
         @keyframes slideUp {
             from {
                 opacity: 0;
-                transform: translateY(20px);
+                transform: translateY(20px)
             }
 
             to {
                 opacity: 1;
-                transform: translateY(0);
+                transform: translateY(0)
             }
         }
 
-        @media (max-width: 480px) {
+        @media (max-width:480px) {
             .container {
                 width: 94%;
                 padding-left: 10px;
-                padding-right: 10px;
+                padding-right: 10px
             }
 
             .card {
-                padding: 20px 15px;
+                padding: 20px 15px
             }
 
             h1 {
-                font-size: 1.4rem;
+                font-size: 1.4rem
             }
 
             .row-inputs.date-group {
                 flex-direction: column;
-                gap: 5px;
+                gap: 5px
             }
 
             .row-inputs.time-group {
                 flex-direction: column;
-                gap: 15px;
+                gap: 15px
             }
 
             .row-inputs.time-group>div {
-                width: 100% !important;
+                width: 100% !important
             }
         }
     </style>
-</head>
-
-<body>
     <div id="canvas-container"></div>
-
     <div class="container">
         <div class="card">
-            <h1>📅 นัดวันว่าง</h1>
-
-            <label>👤 ชื่อของคุณ</label>
-            <input type="text" id="name" placeholder="ชื่อเล่น (เช่น อาร์มสุดหล่อ)">
-
-            <label>🗓️ เลือกวันที่ว่าง</label>
-            <div class="row-inputs date-group">
-                <input type="date" id="startDate" onkeydown="return false" onclick="this.showPicker()">
-                <span style="padding-bottom:12px; color:#888; font-size:0.9rem; align-self:center;">ถึง</span>
-                <input type="date" id="endDate" onkeydown="return false" onclick="this.showPicker()">
-            </div>
-
-            <label>⏰ ช่วงเวลา (24 ชม.)</label>
+            <h1>📅 นัดวันว่าง</h1><label>👤 ชื่อของคุณ</label><input id="name"
+                placeholder="ชื่อเล่น (เช่น อาร์มสุดหล่อ)"><label>🗓️ เลือกวันที่ว่าง</label>
+            <div class="row-inputs date-group"><input id="startDate" onclick="this.showPicker()" onkeydown="return!1"
+                    type="date"><span
+                    style="padding-bottom:12px;color:#888;font-size:.9rem;align-self:center">ถึง</span><input
+                    id="endDate" onclick="this.showPicker()" onkeydown="return!1" type="date"></div><label>⏰ ช่วงเวลา
+                (24 ชม.)</label>
             <div class="row-inputs time-group">
-                <div style="width: 50%;">
-                    <small style="color:var(--text-secondary);">ตั้งแต่</small>
-                    <select id="startTime"></select>
-                </div>
-                <div style="width: 50%;">
-                    <small style="color:var(--text-secondary);">ถึงเวลา</small>
-                    <select id="endTime"></select>
-                </div>
-            </div>
-
-            <button id="submitBtn" onclick="submitData()">🚀 ยืนยันข้อมูล</button>
+                <div style="width:50%"><small style="color:var(--text-secondary)">ตั้งแต่</small><select
+                        id="startTime"></select></div>
+                <div style="width:50%"><small style="color:var(--text-secondary)">ถึงเวลา</small><select
+                        id="endTime"></select></div>
+            </div><button onclick="submitData()" id="submitBtn">🚀 ยืนยันข้อมูล</button>
         </div>
-
         <div class="card">
             <h3>🗓️ ปฏิทินวันว่างเพื่อน</h3>
-            <div id="loading" style="text-align:center; color:#666; padding:20px;">
-                <div style="font-size:2rem;">⏳</div>
-                กำลังโหลดข้อมูล...
+            <div id="loading" style="text-align:center;color:#666;padding:20px">
+                <div style="font-size:2rem">⏳</div>กำลังโหลดข้อมูล...
             </div>
-
-            <div id="calendar-wrapper" style="display:none;">
-                <div class="calendar-header">
-                    <button class="calendar-nav-btn" onclick="changeMonth(-1)">&#10094;</button>
-                    <span id="month-year-label"></span>
-                    <button class="calendar-nav-btn" onclick="changeMonth(1)">&#10095;</button>
-                </div>
-
+            <div id="calendar-wrapper" style="display:none">
+                <div class="calendar-header"><button onclick="changeMonth(-1)" class="calendar-nav-btn">❮</button><span
+                        id="month-year-label"></span><button onclick="changeMonth(1)"
+                        class="calendar-nav-btn">❯</button></div>
                 <div class="calendar-grid">
                     <div class="day-name">อา</div>
                     <div class="day-name">จ</div>
@@ -393,31 +367,23 @@
                     <div class="day-name">ศ</div>
                     <div class="day-name">ส</div>
                 </div>
-
-                <div id="calendar-days" class="calendar-grid"></div>
+                <div class="calendar-grid" id="calendar-days"></div>
             </div>
-
-            <div id="selectedDateDetails" class="date-details-box">
-                <h4 id="detail-date-title" style="margin:0 0 10px 0; color:var(--primary);"></h4>
+            <div class="date-details-box" id="selectedDateDetails">
+                <h4 id="detail-date-title" style="margin:0 0 10px 0;color:var(--primary)"></h4>
                 <div id="detail-list"></div>
-            </div>
-
-            <button id="summaryBtn" class="cal-btn" onclick="findCommonTime()">🔍 สรุปวันยอดฮิต (อัปเดตล่าสุด)</button>
-            <div id="bestTime" class="result-box"
-                style="display:none; margin-top:15px; padding:15px; background:rgba(232, 248, 245, 0.9); border-radius:10px; border:2px dashed #2ECC71; text-align:center;">
+            </div><button onclick="findCommonTime()" class="cal-btn" id="summaryBtn">🔍 สรุปวันยอดฮิต
+                (อัปเดตล่าสุด)</button>
+            <div class="result-box" id="bestTime"
+                style="display:none;margin-top:15px;padding:15px;background:rgba(232,248,245,.9);border-radius:10px;border:2px dashed #2ecc71;text-align:center">
             </div>
         </div>
-
         <div class="footer-wrapper">
-            <div class="credit-badge">
-                ⚡ Developed by <strong>Arm</strong> <span>❤️</span>
-            </div>
-            <span class="warning-text">*กดปุ่มสรุปวันยอดฮิต เพื่อดึงข้อมูลล่าสุดนะจ๊ะ</span>
+            <div class="credit-badge">⚡ Developed by<strong>Arm</strong><span>❤️</span></div><span
+                class="warning-text">*กดปุ่มสรุปวันยอดฮิต เพื่อดึงข้อมูลล่าสุดนะจ๊ะ</span>
         </div>
     </div>
-
-    <script>
-        const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbyNv4P-rNP8zrNZC7Lpjmq8cMpHbRUHE0iZijzDT7OhlRvrXc0i4zH6TgCc3Ttzgc69/exec';
+    <script>const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbyNv4P-rNP8zrNZC7Lpjmq8cMpHbRUHE0iZijzDT7OhlRvrXc0i4zH6TgCc3Ttzgc69/exec';
 
         let isSubmitting = false;
 
@@ -500,7 +466,11 @@
             btn.disabled = true;
 
             let timeString = `${sTime} - ${eTime}`;
-            let dateToSend = (sDate === eDate) ? sDate : `${sDate} ถึง ${eDate}`;
+
+            // --- แก้ไขตรงนี้ครับ ---
+            // ตัดเงื่อนไขเช็ควันเดียวกันออก ให้ส่งรูปแบบ range เสมอ
+            let dateToSend = `${sDate} ถึง ${eDate}`;
+            // ---------------------
 
             try {
                 await fetch(SCRIPT_URL, {
@@ -748,8 +718,4 @@
                 btn.innerHTML = originalText;
                 btn.disabled = false;
             }
-        }
-    </script>
-</body>
-
-</html>
+        }</script>
