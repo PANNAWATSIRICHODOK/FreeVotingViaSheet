@@ -27,6 +27,7 @@
             --glass-bg: rgba(20, 25, 40, 0.65);
             --glass-border: rgba(255, 255, 255, 0.1);
             --liquid-highlight: rgba(255, 255, 255, 0.2);
+            --input-bg: rgba(0, 20, 40, 0.6);
         }
 
         body {
@@ -38,7 +39,6 @@
             color: #fff;
             -webkit-tap-highlight-color: transparent;
             min-height: 100vh;
-            /* Ensure full height */
         }
 
         /* --- Three.js Background --- */
@@ -60,7 +60,6 @@
             position: relative;
             z-index: 1;
             box-sizing: border-box;
-            /* Ensure padding doesn't affect width */
         }
 
         /* --- Liquid Glass Card --- */
@@ -78,25 +77,6 @@
             transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1), box-shadow 0.3s;
         }
 
-        /* Interactive Card Hover (Liquid Feel) */
-        .card::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: -100%;
-            width: 100%;
-            height: 100%;
-            background: linear-gradient(90deg, transparent, var(--liquid-highlight), transparent);
-            transition: 0.5s;
-            transform: skewX(-25deg);
-            pointer-events: none;
-        }
-
-        .card:hover::before {
-            left: 100%;
-            transition: 0.7s;
-        }
-
         .card:hover {
             transform: translateY(-5px) scale(1.01);
             box-shadow: 0 15px 30px rgba(188, 19, 254, 0.2), 0 0 20px rgba(0, 243, 255, 0.2);
@@ -104,11 +84,8 @@
         }
 
         /* --- Typography --- */
-        h1,
-        h3,
-        h4 {
+        h1, h3, h4 {
             font-family: 'Kanit', sans-serif;
-            /* เปลี่ยนจาก Orbitron เป็น Kanit เพื่อรองรับไทยสวยๆ */
             font-weight: 700;
             text-transform: uppercase;
             letter-spacing: 1px;
@@ -132,17 +109,17 @@
             margin-top: 15px;
             display: block;
             font-weight: 500;
-            /* text-transform: uppercase; */
             letter-spacing: 0.5px;
+            margin-bottom: 8px;
         }
 
-        /* --- Holographic Inputs --- */
+        /* --- Holographic Inputs & Selects (UPDATED) --- */
         input,
         select {
             width: 100%;
             padding: 12px 15px;
             margin-bottom: 10px;
-            background: rgba(0, 0, 0, 0.3);
+            background-color: var(--input-bg);
             border: 1px solid rgba(0, 243, 255, 0.3);
             border-radius: 8px;
             color: #fff;
@@ -151,23 +128,57 @@
             transition: all 0.3s ease;
             box-sizing: border-box;
             appearance: none;
-            /* Standardize appearance */
             -webkit-appearance: none;
+            -moz-appearance: none;
+        }
+
+        /* Custom Dropdown Arrow for Select */
+        select {
+            background-image: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%2300f3ff' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3e%3cpolyline points='6 9 12 15 18 9'%3e%3c/polyline%3e%3c/svg%3e");
+            background-repeat: no-repeat;
+            background-position: right 15px center;
+            background-size: 16px;
+            padding-right: 40px; /* Make space for arrow */
+            cursor: pointer;
+        }
+
+        /* Dropdown Options Styling (Chrome/Edge/Firefox) */
+        select option {
+            background-color: #0b0b14; /* Dark background for dropdown list */
+            color: var(--neon-cyan);
+            padding: 10px;
+        }
+
+        /* Input Date Styling */
+        input[type="date"] {
+            position: relative;
+            cursor: pointer;
+        }
+
+        /* Style the Calendar Icon inside Input Date */
+        ::-webkit-calendar-picker-indicator {
+            filter: invert(1) brightness(1.5) drop-shadow(0 0 2px var(--neon-cyan));
+            cursor: pointer;
+            opacity: 0.8;
+            transition: 0.3s;
+        }
+
+        ::-webkit-calendar-picker-indicator:hover {
+            opacity: 1;
+            transform: scale(1.1);
         }
 
         input:focus,
         select:focus {
             outline: none;
             border-color: var(--neon-magenta);
-            box-shadow: 0 0 15px var(--neon-magenta);
-            background: rgba(0, 0, 0, 0.5);
-            transform: scale(1.02);
+            box-shadow: 0 0 15px rgba(188, 19, 254, 0.4);
+            background-color: rgba(0, 0, 0, 0.7);
+            transform: scale(1.01);
         }
 
-        /* Fix Date Picker Icon Color */
-        ::-webkit-calendar-picker-indicator {
-            filter: invert(1) drop-shadow(0 0 2px var(--neon-cyan));
-            cursor: pointer;
+        input::placeholder {
+            color: rgba(255, 255, 255, 0.4);
         }
 
         .row-inputs {
@@ -175,14 +186,13 @@
             gap: 15px;
         }
 
-        /* --- Warp Speed Buttons --- */
+        /* --- Buttons --- */
         button {
             width: 100%;
             padding: 15px;
             margin-top: 25px;
             border: none;
             border-radius: 50px;
-            /* Pill shape */
             font-family: 'Kanit', sans-serif;
             font-size: 1.2rem;
             font-weight: bold;
@@ -195,7 +205,6 @@
             transition: all 0.3s ease;
             z-index: 1;
             touch-action: manipulation;
-            /* Improves touch response */
         }
 
         button::before {
@@ -214,7 +223,6 @@
         button:hover {
             color: #000;
             letter-spacing: 1px;
-            /* Warp effect */
             box-shadow: 0 0 30px var(--neon-cyan);
         }
 
@@ -229,7 +237,6 @@
             box-shadow: none;
         }
 
-        /* Summary Button (Guardians Style - Magenta) */
         button.cal-btn {
             border-color: var(--neon-magenta);
             color: var(--neon-magenta);
@@ -301,7 +308,6 @@
             cursor: pointer;
             background: rgba(255, 255, 255, 0.05);
             transition: all 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-            /* Bouncy effect */
             border: 1px solid transparent;
             user-select: none;
         }
@@ -371,87 +377,36 @@
                 opacity: 0;
                 transform: translateY(20px);
             }
-
             to {
                 opacity: 1;
                 transform: translateY(0);
             }
         }
 
-        /* --- Responsive Styles (New & Improved) --- */
-
-        /* Tablet & Small Laptop (max-width: 768px) */
+        /* --- Responsive Styles --- */
         @media (max-width: 768px) {
-            .container {
-                padding: 30px 15px;
-                /* ลด Padding ด้านข้าง */
-            }
-
-            .card {
-                padding: 20px;
-                /* ลด Padding ใน Card */
-            }
-
-            h1 {
-                font-size: 1.5rem;
-                /* ลดขนาดหัวข้อ */
-            }
-
-            .calendar-grid {
-                gap: 5px;
-                /* ลดระยะห่างตารางปฏิทิน */
-            }
-
-            button {
-                font-size: 1rem;
-                /* ปรับขนาดตัวอักษรปุ่ม */
-                padding: 12px;
-            }
+            .container { padding: 30px 15px; }
+            .card { padding: 20px; }
+            h1 { font-size: 1.5rem; }
+            .calendar-grid { gap: 5px; }
+            button { font-size: 1rem; padding: 12px; }
         }
 
-        /* Mobile Phones (max-width: 480px) */
         @media (max-width: 480px) {
-            .row-inputs {
-                flex-direction: column;
-                /* เรียง Input แนวตั้งบนมือถือ */
-                gap: 10px;
+            .row-inputs { flex-direction: column; gap: 10px; }
+            .calendar-day { font-size: 0.9rem; border-radius: 6px; }
+            .day-name { font-size: 0.8rem; }
+
+            /* Better Touch Targets on Mobile */
+            input, select {
+                font-size: 16px; /* Prevents iOS Zoom */
+                padding: 14px;
             }
 
-            .calendar-day {
-                font-size: 0.9rem;
-                /* ปรับขนาดวันที่ให้อ่านง่าย */
-                border-radius: 6px;
-            }
-
-            .day-name {
-                font-size: 0.8rem;
-            }
-
-            /* ป้องกัน iOS ซูมตอนกด Input */
-            input,
-            select {
-                font-size: 16px;
-                padding: 10px;
-            }
-
-            h1 {
-                font-size: 1.3rem;
-                margin-bottom: 20px;
-            }
-
-            .card {
-                padding: 15px;
-                /* เพิ่มพื้นที่บนจอมือถือเล็ก */
-                margin-bottom: 20px;
-            }
-
-            .calendar-header {
-                padding: 8px;
-            }
-
-            #month-year-label {
-                font-size: 1rem !important;
-            }
+            h1 { font-size: 1.3rem; margin-bottom: 20px; }
+            .card { padding: 15px; margin-bottom: 20px; }
+            .calendar-header { padding: 8px; }
+            #month-year-label { font-size: 1rem !important; }
         }
     </style>
 </head>
@@ -465,38 +420,38 @@
         <div class="card">
             <h1>ภารกิจ: ตามหาเวลาว่าง</h1>
 
-            <label>ชื่อ</label>
-            <input id="name" placeholder="เช่น น้องซี">
+            <label>ชื่อเจ้าหน้าที่</label>
+            <input id="name" placeholder="ระบุชื่อรหัส เช่น น้องซี">
 
-            <label>เลือกวันว่าง</label>
+            <label>เลือกช่วงวันปฏิบัติการ</label>
             <div class="row-inputs">
                 <input id="startDate" type="date" onclick="this.showPicker()">
-                <span style="align-self:center; color: var(--neon-cyan)">ถึง</span>
+                <span style="align-self:center; color: var(--neon-cyan); font-weight:bold;">ถึง</span>
                 <input id="endDate" type="date" onclick="this.showPicker()">
             </div>
 
-            <label>ช่วงเวลาที่ว่าง</label>
+            <label>ช่วงเวลาที่สแตนด์บาย</label>
             <div class="row-inputs">
                 <div style="width:100%">
-                    <small style="color:rgba(255,255,255,0.6)">เริ่ม</small>
+                    <small style="color:rgba(255,255,255,0.6); display:block; margin-bottom:5px;">เวลาเริ่ม</small>
                     <select id="startTime"></select>
                 </div>
                 <div style="width:100%">
-                    <small style="color:rgba(255,255,255,0.6)">สิ้นสุด</small>
+                    <small style="color:rgba(255,255,255,0.6); display:block; margin-bottom:5px;">เวลาสิ้นสุด</small>
                     <select id="endTime"></select>
                 </div>
             </div>
 
-            <button onclick="submitData()" id="submitBtn">ยืนยัน</button>
+            <button onclick="submitData()" id="submitBtn">ยืนยันพิกัดเวลา</button>
         </div>
 
         <!-- Calendar Card -->
         <div class="card">
-            <h3>ตารางวันว่าง</h3>
+            <h3>ตารางภารกิจรวม</h3>
 
             <div id="loading" style="text-align:center; padding:20px; color: var(--neon-cyan)">
                 <div style="font-size:2rem; animation: spin 2s linear infinite">⚛️</div>
-                <p>กำลังเชื่อมต่อสัญญาณ...</p>
+                <p>กำลังเชื่อมต่อดาวเทียม...</p>
             </div>
 
             <div id="calendar-wrapper" style="display:none">
@@ -533,7 +488,7 @@
             <div style="font-family: 'Orbitron'; font-size: 0.8rem; color: #fff;">
                 SYSTEMS BY <span style="color: var(--neon-cyan)">ARM</span>
             </div>
-            <span class="warning-text">* กดปุ่ม 'สแกนหาเวลา' เพื่อดูข้อมูลล่าสุด</span>
+            <span class="warning-text">* ข้อมูลจะถูกเข้ารหัสก่อนส่งไปยังฐานทัพ</span>
         </div>
     </div>
 
@@ -672,7 +627,7 @@
             const sTime = document.getElementById('startTime').value;
             const eTime = document.getElementById('endTime').value;
 
-            if (!name || !sDate || !eDate) return alert("⚠️ ข้อมูลไม่ครบ: กรุณาระบุชื่อและวันที่ให้ครบถ้วน");
+            if (!name || !sDate || !eDate) return alert("⚠️ ข้อมูลไม่ครบ: กรุณาระบุรหัสชื่อและวันปฏิบัติการ");
             if (sDate > eDate) return alert("⚠️ ข้อผิดพลาด: มิติเวลาบิดเบี้ยว (วันเริ่มต้องมาก่อนวันจบ)");
 
             isSubmitting = true;
@@ -831,7 +786,7 @@
                 });
                 detailBox.style.display = 'block';
             } else {
-                list.innerHTML = `<div style="text-align:center; color:#888; padding:10px;">ยังไม่มีนักบินลงเวลา</div>`;
+                list.innerHTML = `<div style="text-align:center; color:#888; padding:10px;">ยังไม่มีเจ้าหน้าที่ลงเวลา</div>`;
                 detailBox.style.display = 'block';
             }
         }
